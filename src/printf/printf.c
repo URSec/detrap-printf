@@ -314,6 +314,7 @@ typedef struct {
   printf_size_t max_chars;
 } output_gadget_t;
 
+#ifndef PRINTF_ONLY__vsnprintf
 // Note: This function currently assumes it is not passed a '\0' c,
 // or alternatively, that '\0' can be passed to the function in the output
 // gadget. The former assumption holds within the printf library. It also
@@ -1026,6 +1027,10 @@ static printf_flags_t parse_flags(const char** format)
     }
   } while (true);
 }
+#else /* PRINTF_ONLY__vsnprintf */
+#include "printf_internal.h"
+#endif /* PRINTF_ONLY__vsnprintf */
+#ifndef PRINTF_NO_EXTERNAL
 
 // internal vsnprintf - used for implementing _all library functions
 // Note: We don't like the C standard's parameter names, so using more informative parameter names
@@ -1408,6 +1413,8 @@ int fctprintf(void (*out)(char c, void* extra_arg), void* extra_arg, const char*
   va_end(args);
   return ret;
 }
+
+#endif /* PRINTF_NO_EXTERNAL */
 
 
 #ifdef __cplusplus
